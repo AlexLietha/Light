@@ -20,16 +20,16 @@ export class IdleEnemyState extends EnemyState{
     static instance = null;
     static GetInstance()
     {
-        if(IdleState.instance == null)
+        if(IdleEnemyState.instance == null)
         {
-            IdleState.instance = new IdleState();
+            IdleEnemyState.instance = new IdleEnemyState();
         }
 
-        return IdleState.instance;
+        return IdleEnemyState.instance;
     }
     Update(context)
     {
-        if(context.dashing == true){
+        if(context.isDashing == true){
             context.SetCurrentState(DashingEnemyState.GetInstance());
             return;
         }
@@ -37,15 +37,18 @@ export class IdleEnemyState extends EnemyState{
 
     OnEnter(context)
     {
-        
+        console.log("Entered Enemy Idle State");
+        context.Dash();
     }
 
     OnExit(context)
     {
+        console.log("Exited Enemy Idle State");
+
     }
 
 }
-export class DashingEnemyState extends WandState{
+export class DashingEnemyState extends EnemyState{
     static instance = null;
     static GetInstance()
     {
@@ -58,22 +61,28 @@ export class DashingEnemyState extends WandState{
     }
     Update(context)
     {
-        if(context.dashing == false){
-            context.SetCurrentState(DashingEnemyState.GetInstance());
+        if(context.isDashing == false){
+            context.SetCurrentState(IdleEnemyState.GetInstance());
             return;
         }
+        
+
     }
 
     OnEnter(context)
     {
-        console.log("Entered Wand Shooting State");
+        console.log("Entered Enemy Dash State");
+       
+        let dir = new Phaser.Math.Vector2(
+            context.player.sprite.x - context.sprite.x, 
+            context.player.sprite.y - context.sprite.y
+            ).normalize();
+        context.sprite.setVelocity(dir.x * context.speed, dir.y * context.speed);
     }
 
     OnExit(context)
     {
-        console.log("Exited Wand Shooting State")
-        context.light.y = -64;
-        context.light.angle = 0;
+        console.log("Exited Enemy Dash State");
 
     }
 

@@ -1,5 +1,6 @@
 import {Player} from '/src/Player.js'
 import { Wand } from '/src/Wand.js'
+import { Enemy } from '/src/Enemy.js'
 export class Start extends Phaser.Scene {
     
 
@@ -22,27 +23,47 @@ export class Start extends Phaser.Scene {
         this.load.image('wand', 'assets/Light/wand.png');
         this.load.image('gem', 'assets/Light/gem.png');
         this.load.image('light', 'assets/Light/light.png');
+
+        //Enemy Sprite
+        this.load.image('enemy', 'assets/Light/enemy.png');
     }
 
     create() {
         
-       
-
         //Scene Creation
         this.background = this.add.tileSprite(640, 360, 1280, 720, 'background');
         this.background.setDepth(0);
 
-        //Floor Creations
-        this.floor = this.add.rectangle(0,720, 1280*2, 128*2, 0x00ff00);
+        //Arena Creations
+        this.floor = this.add.rectangle(640,720, 1280, 64, 0x00ff00);
         this.physics.add.existing(this.floor, true);
         for (let x = 64; x < 1280; x += 128) {
-            this.add.image(x, 720-64, 'floor');
+            this.add.image(x, 720+32, 'floor');
         }
+        this.wallLeft = this.add.rectangle(0, 360, 64, 720, 0x00ff00);
+        this.physics.add.existing(this.wallLeft, true);
+        for (let x = 64; x < 720; x += 128) {
+            this.add.image(-32, x, 'floor');
+        }
+
+        this.wallRight = this.add.rectangle(1280, 360, 64, 720, 0x00ff00);
+        this.physics.add.existing(this.wallRight, true);
+        for (let x = 64; x < 720; x += 128) {
+            this.add.image(1280 + 32, x, 'floor');
+        }
+
+        this.celing = this.add.rectangle(640,0, 1280, 64, 0x00ff00);
+        this.physics.add.existing(this.celing, true);
+
+        for (let x = 64; x < 1280; x += 128) {
+            this.add.image(x, -32, 'floor');
+        }
+
 
         // Wand Creation
         this.gemSprite = this.add.image(300, 720-128-128-32, 'gem');
         this.wandSprite = this.add.image(300, 720-128-128, 'wand');
-        this.lightSprite = this.add.image(0, 0, 'light');
+        this.lightSprite = this.add.image(0, -10, 'light');
         this.lightSprite.setOrigin(0, .5); 
         this.gemSprite.setDepth(11);
         this.wandSprite.setDepth(12);
@@ -56,7 +77,15 @@ export class Start extends Phaser.Scene {
         this.player = new Player(this, this.playerSprite, this.input.keyboard.createCursorKeys(), this.wand);
         this.physics.add.collider(this.player.sprite, this.floor, this.player.Land, null, this.player);
 
-        
+        // Enemy Creation
+        this.enemySprite = this.physics.add.sprite(250, 150, 'enemy')
+        this.enemySprite.setDepth(5);
+        this.enemy = new Enemy(this.enemySprite, this.player, this);
+        this.physics.add.collider(this.enemySprite, this.floor, this.enemy.StopDashing, null, this.enemy);
+        this.physics.add.collider(this.enemySprite, this.wallLeft, this.enemy.StopDashing, null, this.enemy);
+        this.physics.add.collider(this.enemySprite, this.wallRight, this.enemy.StopDashing, null, this.enemy);
+        this.physics.add.collider(this.enemySprite, this.celing, this.enemy.StopDashing, null, this.enemy);
+
         
         
     }
@@ -65,6 +94,7 @@ export class Start extends Phaser.Scene {
 
         this.background.tilePositionX += 2;
         this.player.Update();
+        this.enemy.Update();
 
     }
 }
