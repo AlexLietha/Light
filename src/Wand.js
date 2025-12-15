@@ -49,7 +49,6 @@ export class Wand{
             this.shoot = true;
             this.Shoot();
             this.timer = this.player.scene.time.delayedCall(500, this.OffCoolDown, [], this);
-            
         }
 
 
@@ -97,8 +96,28 @@ export class Wand{
         this.light.y = this.gem.y;
         this.light.angle = this.gem.angle - 90;
 
-        this.light.setTint(this.gem.tintTopLeft);
+
         
+        this.light.setTint(this.gem.tintTopLeft);
+
+        // Adjusts the lights hitbox
+        if(this.direction == "up"){
+            this.light.body.setSize(16, 1280);
+            this.light.body.setOffset(-8, -1280);
+        }
+        else if (this.direction == "down"){
+            this.light.body.setSize(16, 1280);
+            this.light.body.setOffset(-8, 0);
+        }
+        else if (this.direction == "left"){
+            this.light.body.setSize(1280, 16);
+            this.light.body.setOffset(-1280, 0);
+        }
+        else if (this.direction == "right"){
+            this.light.body.setSize(1280, 16);
+            this.light.body.setOffset(0, 0);
+        }
+
 
     }
 

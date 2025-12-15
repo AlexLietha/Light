@@ -29,6 +29,10 @@ export class IdleEnemyState extends EnemyState{
     }
     Update(context)
     {
+        if(context.isDead == true){
+            context.SetCurrentState(DeadEnemyState.GetInstance());
+            return;
+        }
         if(context.isDashing == true){
             context.SetCurrentState(DashingEnemyState.GetInstance());
             return;
@@ -38,7 +42,7 @@ export class IdleEnemyState extends EnemyState{
     OnEnter(context)
     {
         console.log("Entered Enemy Idle State");
-        context.Dash();
+        context.Wait();
     }
 
     OnExit(context)
@@ -61,6 +65,10 @@ export class DashingEnemyState extends EnemyState{
     }
     Update(context)
     {
+        if(context.isDead == true){
+            context.SetCurrentState(DeadEnemyState.GetInstance());
+            return;
+        }
         if(context.isDashing == false){
             context.SetCurrentState(IdleEnemyState.GetInstance());
             return;
@@ -84,6 +92,47 @@ export class DashingEnemyState extends EnemyState{
     {
         console.log("Exited Enemy Dash State");
 
+    }
+
+}
+
+export class DeadEnemyState extends EnemyState{
+    static instance = null;
+    static GetInstance()
+    {
+        if(DeadEnemyState.instance == null)
+        {
+            DeadEnemyState.instance = new DeadEnemyState();
+        }
+
+        return DeadEnemyState.instance;
+    }
+    Update(context)
+    {
+        if(context.isDead == false){
+            context.SetCurrentState(IdleEnemyState.GetInstance());
+            return;
+        }
+        
+
+    }
+
+    OnEnter(context)
+    {
+        console.log("Entered Enemy Dead State");
+        context.sprite.body.enable = false;
+        context.sprite.setVelocity(0, 0);
+        context.sprite.active = false;
+        context.sprite.visible = false;
+       
+    }
+
+    OnExit(context)
+    {
+        console.log("Exited Enemy Dead State");
+        context.sprite.body.enable = true;
+        context.sprite.active = true;
+        context.sprite.visible = true;
     }
 
 }

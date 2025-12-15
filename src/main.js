@@ -17,8 +17,13 @@ const config = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     physics: {
-    default: 'arcade'
+    default: 'arcade',
+    arcade: {
+        debug: true,
+        debugBodyColor: 0x00ff00,
+        debugStaticBodyColor: 0xff0000
     }
+}
 }
 
 new Phaser.Game(config);

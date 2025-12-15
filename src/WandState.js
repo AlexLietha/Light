@@ -113,7 +113,10 @@ export class ShootingState extends WandState{
 
     OnEnter(context)
     {
+
         console.log("Entered Wand Shooting State");
+        context.light.body.enable = true;
+        
     }
 
     OnExit(context)
@@ -121,6 +124,7 @@ export class ShootingState extends WandState{
         console.log("Exited Wand Shooting State")
         context.light.y = -64;
         context.light.angle = 0;
+        context.light.body.enable = false;
 
     }
 
