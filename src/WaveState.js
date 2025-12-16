@@ -16,6 +16,7 @@ export class WaveState{
     }
 }
 
+// main menu state
 export class MenuState extends WaveState{
     static instance = null;
     static GetInstance()
@@ -29,6 +30,7 @@ export class MenuState extends WaveState{
     }
     Update(context)
     {
+        // when the start button is pressed, eneter the start state
         if(context.started == true){
             context.SetCurrentState(StartState.GetInstance());
             return;
@@ -51,6 +53,8 @@ export class MenuState extends WaveState{
 
 }
 
+
+// spawns the player
 export class StartState extends WaveState{
     static instance = null;
     static GetInstance()
@@ -77,8 +81,9 @@ export class StartState extends WaveState{
     {
         console.log("Entered Start State");
         context.player.spawned = true;
-        context.built = true;
         context.round = 0;
+        context.built = true;
+        
         
         
     }
@@ -90,6 +95,7 @@ export class StartState extends WaveState{
 
 }
 
+// spawns the enemies
 export class SpawningState extends WaveState{
     static instance = null;
     static GetInstance()
@@ -103,10 +109,12 @@ export class SpawningState extends WaveState{
     }
     Update(context)
     {
+        // when player dies
         if(context.player.health == 0){
             context.SetCurrentState(MenuState.GetInstance());
             return;
         }
+        // when all enemies have spawned
         if(context.spawning == false){
             context.SetCurrentState(WaitingState.GetInstance());
             return;
@@ -117,9 +125,11 @@ export class SpawningState extends WaveState{
     OnEnter(context)
     {
         console.log("Entered Spawning State");
+        //updates round count
         context.round++;
         context.waveText.setText('Wave: ' + context.round);
 
+        // starts spawning enemies
         context.spawning = true;
         context.spawnedEnemies = 0;
         context.StartSpawning();
@@ -129,11 +139,13 @@ export class SpawningState extends WaveState{
     OnExit(context)
     {
         console.log("Exited Spawning State");
+        // stops spawning enemies if player dies
         context.spawnTimer.remove();
     }
 
 }
 
+// waits for the all the enemies to die or for the player to dies
 export class WaitingState extends WaveState{
     static instance = null;
     static GetInstance()
@@ -148,10 +160,12 @@ export class WaitingState extends WaveState{
     }
     Update(context)
     {
+        // when player dies
         if(context.player.health == 0){
             context.SetCurrentState(MenuState.GetInstance());
             return;
         }
+        // when all enemies die
         if(context.AllEnemiesAreDead() == true && (context.round == context.spawnedEnemies)){
             context.SetCurrentState(SpawningState.GetInstance());
             return;

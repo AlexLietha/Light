@@ -16,6 +16,7 @@ export class WandState{
     }
 }
 
+// idle state, sets the wand offset so it can match the players position
 export class IdleState extends WandState{
     static instance = null;
     static GetInstance()
@@ -90,6 +91,10 @@ export class IdleState extends WandState{
     }
 
 }
+
+
+
+// locks the rotation of the wand, until it exits this state
 export class ShootingState extends WandState{
     static instance = null;
     static GetInstance()
@@ -124,6 +129,7 @@ export class ShootingState extends WandState{
 
     OnExit(context)
     {
+        
         console.log("Exited Wand Shooting State")
         context.light.y = -64;
         context.light.angle = 0;

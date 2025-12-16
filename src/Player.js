@@ -2,39 +2,43 @@ import {NormalState, DespawnedState, InvincibleState} from '/src/State.js'
 import { Wand} from '/src/Wand.js'
 export class Player{
     constructor(scene){
+        // reference to main scene
         this.scene = scene;
-        this.accelerationY = 0;
-        this.velocityY = 0;
-        this.accelerationX = 0;
-        this.velocityX = 0;
+      
         // Character Sprite Constructor
         this.sprite = this.scene.physics.add.sprite(640, 720-128-128-32, 'player');
+        this.sprite.body.setSize(80, 80);
+        this.sprite.body.setOffset(24, 48);
         this.sprite.setDepth(10);
+
+        // input from keyboard
         this.keys = this.scene.input.keyboard.createCursorKeys();
+
+        // colliders to the walls and platform
         this.scene.physics.add.collider(this.sprite, this.scene.floor, this.Land, null, this);
         this.scene.physics.add.collider(this.sprite, this.scene.walls);
         this.platformCollider = this.scene.physics.add.collider(this.sprite, this.scene.platforms, this.Land, null, this);
-
        
-
+        // Creates the wand
         this.wand = new Wand(this.scene, this);
 
+        // physics so that the player doesn't slide
         this.sprite.setMaxVelocity(300, 10000);
         this.sprite.setDragX(2000);
+
+        //starts falling to floor
         this.UpdateMovementY(10, 100);
 
-        this.scene = scene;
-
-        this.isFalling = true;
+      
+        //bools for state machine
         this.isGrounded = true;
-        this.feet
-        this.isAttacking = false;
-        this.isMoving = false;
-
         this.spawned = false;
         this.invincible = false;
+
+        // player health
         this.health = 5;
         
+        // sets current state to despawned. player will get spawned when the wave system enters start state
         this.currentState = DespawnedState.GetInstance();
         
         
@@ -44,19 +48,25 @@ export class Player{
 
     Update()
     {
+        // sees if the player is currently grounded
         this.isGrounded = this.sprite.body.blocked.down || this.sprite.body.touching.down;
-        console.log(this.isGrounded);
+
+        // updates current state
         this.currentState.Update(this);
+
+        // updates wand
         this.wand.Update();
 
        
         //Character Movement
+
+        // Jump
         if(this.keys.up.isDown && this.isGrounded){
             this.UpdateMovementY(2500, -1300)
-            this.isFalling = true;
             this.isGrounded = false;
         }
 
+        // Movement and changes the direction of the wand
         if(this.keys.left.isDown && this.keys.right.isDown){
             this.Stop();
         }
@@ -72,7 +82,7 @@ export class Player{
             this.Stop();
         }
       
-
+        // changes the direction of the wand, verticle takes priority over horizontal
         if(this.keys.up.isDown && this.keys.down.isDown){
 
         }
@@ -85,63 +95,65 @@ export class Player{
         else{
 
         }
+
+        // Shoots if space is pressed
         if(this.keys.space.isDown){
             this.wand.Shoot();
         }
 
    
-
+        // if down is held, the player falls through the platforms
         if (this.keys.down.isDown || this.sprite.body.velocity.y < 0) {
             this.platformCollider.active = false;
         } else {
-            this.platformCollider.active = true;  // re-enable
+            this.platformCollider.active = true;
 
         }
 
 
     }
+
+    // updates the sprite's y acceleration and velocity
     UpdateMovementY(acceleration, velocity){
-        this.accelerationY = acceleration;
-        this.velocityY = velocity;
+      
 
         console.log("Updated player acceleration");
-        this.sprite.setAccelerationY(this.accelerationY);
-        this.sprite.setVelocityY(this.velocityY);
+        this.sprite.setAccelerationY(acceleration);
+        this.sprite.setVelocityY(velocity);
         //this.blackcircle.setAccelerationY(this.acceleration);
     }
 
+    // updates the sprite's x acceleration
     UpdateMovementX(accel){
-        this.accelerationX = accel;
-        this.sprite.setAccelerationX(this.accelerationX);
+        this.sprite.setAccelerationX(accel);
     }
+
+    // stops the sprite's x movement
     Stop(){
-        this.accelerationX = 0;
-        this.velocityX = 0;
-        this.sprite.setAccelerationX(this.accelerationX);
+        this.sprite.setAccelerationX(0);
         //this.sprite.setVelocityX(this.velocityX);
     }
 
+    // stops the sprite's y velocity
     Land()
     {
-        console.log("Landed");
-        this.UpdateMovementY(2500, 0);
-        this.isFalling = false;
-        this.isGrounded = true;
+       this.UpdateMovementY(2500, 0);
+     
     }
   
-    
+    // shoots the wand
     Shoot(){
         this.wand.Shoot();
     }
 
     
-
+    // player takes damage and turns invincible. After 3 seconds turns vincible
     Damage(){
         this.invincible = true;
-        this.timer = this.scene.time.delayedCall(3000, () => {
-                this.Vincible();
-            });
+        this.timer = this.scene.time.delayedCall(3000, () => { this.Vincible(); });
     }
+
+    // player becomes vincible
     Vincible(){
         this.invincible = false;
     }
@@ -151,7 +163,7 @@ export class Player{
     
 
 
-
+    // standard set state
     SetCurrentState(NewState)
     {
         if(this.currentState == NewState)

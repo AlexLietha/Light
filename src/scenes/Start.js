@@ -66,9 +66,15 @@ export class Start extends Phaser.Scene {
         this.walls.add(this.wallRight);
 
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(240, 460, 'platform');
-        this.platforms.create(641, 230, 'platform');
-        this.platforms.create(1042, 460, 'platform');
+
+        let platform1 = this.platforms.create(240, 460, 'platform');
+        let platform2 = this.platforms.create(641, 230, 'platform');
+        let platform3 = this.platforms.create(1042, 460, 'platform');
+
+        // Make only the top collide
+        platform1.body.setSize(platform1.width, 2).setOffset(0, platform1.height - 16);
+        platform2.body.setSize(platform1.width, 2).setOffset(0, platform1.height - 16);
+        platform3.body.setSize(platform1.width, 2).setOffset(0, platform1.height - 16);
 
 
 

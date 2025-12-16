@@ -2,7 +2,7 @@ import { Start } from './scenes/Start.js';
 
 const config = {
     type: Phaser.AUTO,
-    title: 'Overlord Rising',
+    title: 'light',
     description: '',
     parent: 'game-container',
     width: 1280,
@@ -18,11 +18,7 @@ const config = {
     },
     physics: {
     default: 'arcade',
-    arcade: {
-        debug: true,
-        debugBodyColor: 0x00ff00,
-        debugStaticBodyColor: 0xff0000
-    }
+    
 }
 }
 
