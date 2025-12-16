@@ -34,7 +34,7 @@ export class WaveSystem{
         }
         this.waveText = this.scene.add.text(100, 200, 'Wave: ' + this.round);
         this.playerHealth = this.scene.add.text(100, 150, 'Health: ' + this.player.health);
-
+        this.spawnTimer = null;
     }
 
     Update(){
@@ -85,7 +85,6 @@ export class WaveSystem{
     SpawnEnemy(){
         if(this.spawnedEnemies >= this.round ){
             this.spawning = false;
-            this.spawnTimer.remove();
             return;
         }
         for (const enemy of this.enemies){

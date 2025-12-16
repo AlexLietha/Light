@@ -13,6 +13,15 @@ export class Player{
         this.keys = this.scene.input.keyboard.createCursorKeys();
         this.scene.physics.add.collider(this.sprite, this.scene.floor, this.Land, null, this);
         this.scene.physics.add.collider(this.sprite, this.scene.walls);
+        // Feet Hitbox
+        this.feet = this.scene.add.zone(this.sprite.x, this.sprite.height/2, this.sprite.width * .5, 10);
+        this.scene.physics.world.enable(this.feet);
+        this.scene.physics.add.overlap(this.feet, this.scene.platforms, this.LandwithFeet, null, this);
+        this.feet.body.setImmovable(true);
+        this.feet.body.checkCollision.left = false;
+        this.feet.body.checkCollision.right = false;
+        this.feet.body.checkCollision.up = true;
+        this.feet.body.checkCollision.down = true;
 
         this.wand = new Wand(this.scene, this);
 
@@ -23,6 +32,7 @@ export class Player{
         this.scene = scene;
 
         this.isFalling = true;
+        this.isGrounded = true;
         this.isAttacking = false;
         this.isMoving = false;
 
@@ -39,15 +49,24 @@ export class Player{
 
     Update()
     {
+        const wasGrounded = this.isGrounded;
+        console.log(this.sprite.body.velocity.y);
         this.currentState.Update(this);
         this.wand.Update();
-        // this.currentState.Update(this);
 
+        this.feet.body.reset(
+            this.sprite.body.center.x,
+            this.sprite.body.bottom - 5
+        );
+        
+       
         //Character Movement
-        if(this.keys.up.isDown && !this.isFalling){
+        if(this.keys.up.isDown && wasGrounded){
             this.UpdateMovementY(2500, -1300)
             this.isFalling = true;
+            this.isGrounded = false;
         }
+
         if(this.keys.left.isDown && this.keys.right.isDown){
             this.Stop();
         }
@@ -62,6 +81,7 @@ export class Player{
         else{
             this.Stop();
         }
+      
 
         if(this.keys.up.isDown && this.keys.down.isDown){
 
@@ -77,6 +97,13 @@ export class Player{
         }
         if(this.keys.space.isDown){
             this.wand.Shoot();
+        }
+
+        if(this.keys.down.isDown || this.sprite.body.velocity.y < 0){
+            this.feet.body.enable = false;
+        }
+        else{
+            this.feet.body.enable = true;
         }
 
 
@@ -105,8 +132,15 @@ export class Player{
     Land()
     {
         console.log("Landed");
-        this.UpdateMovementY(0, 0);
+        this.UpdateMovementY(2500, 0);
         this.isFalling = false;
+        this.isGrounded = true;
+    }
+    LandwithFeet(){
+        console.log("Landed With feet");
+        this.UpdateMovementY(2500, 0);
+        this.isFalling = false;
+        this.isGrounded = true;
     }
     
     Shoot(){

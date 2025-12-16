@@ -20,6 +20,9 @@ export class Start extends Phaser.Scene {
         //Floor Sprite
         this.load.image('floor', 'assets/Light/Light_scene_Floor1.0.png');
 
+        //Platfomr Sprite
+        this.load.image('platform', 'assets/Light/platform.png');
+
         //Wand Sprite
         this.load.image('wand', 'assets/Light/wand.png');
         this.load.image('gem', 'assets/Light/gem.png');
@@ -61,6 +64,13 @@ export class Start extends Phaser.Scene {
         this.walls.add(this.celing);
         this.walls.add(this.wallLeft);
         this.walls.add(this.wallRight);
+
+        this.platforms = this.physics.add.staticGroup();
+        this.platforms.create(240, 460, 'platform');
+        this.platforms.create(641, 230, 'platform');
+        this.platforms.create(1042, 460, 'platform');
+
+
 
 
 

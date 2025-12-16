@@ -128,7 +128,8 @@ export class SpawningState extends WaveState{
 
     OnExit(context)
     {
-        console.log("Exited Spawning State")
+        console.log("Exited Spawning State");
+        context.spawnTimer.remove();
     }
 
 }
