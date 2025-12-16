@@ -1,14 +1,16 @@
 import {IdleEnemyState, DashingEnemyState} from '/src/EnemyState.js'
 export class Enemy{
-    constructor(sprite, player, scene){
-        this.sprite = sprite;
-        this.player = player;
+    constructor(scene){
         this.scene = scene;
+        this.sprite = this.scene.physics.add.sprite(250, 150, 'enemy')
+
+        this.player = null;
+        
         this.isDashing = true;
         this.speed = 300;
         
         this.sprite.setTint(16777215);
-
+        this.isDead = true;
         this.currentState = IdleEnemyState.GetInstance();
     }
 
@@ -19,7 +21,6 @@ export class Enemy{
         this.isDashing = true;
     }
     StopDashing(){
-        console.log("Hit floor, is now not dashing");
         this.isDashing = false;
     }
     
@@ -30,7 +31,6 @@ export class Enemy{
     }
 
     Damage(light){
-        console.log("trigger activated");
         if(this.sprite.tintTopLeft == 16777215){
             this.sprite.setTint(this.sprite.tintTopLeft - light.tintTopLeft);
             console.log("Enemy Hit" + this.sprite.tintTopLeft);

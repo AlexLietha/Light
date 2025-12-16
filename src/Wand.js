@@ -1,13 +1,23 @@
 import {IdleState, ShootingState} from '/src/WandState.js'
 export class Wand{
-    constructor(gemSprite, wandSprite, light){
-        // Wand Sprite adjustments
-        this.gem = gemSprite;
-        this.gem.setTint(0x0000ff);  
+    constructor(scene, player){
+        this.scene = scene;
 
+        this.gem = this.scene.add.sprite(300, 720-128-128-32, 'gem');
+        this.gem.setTint(0x0000ff);  
         this.gem.setScale(2, 2);
-        this.wand = wandSprite;
+        this.gem.setDepth(11);
+
+        this.wand = this.scene.add.sprite(300, 720-128-128, 'wand');
         this.wand.setScale(2, 2);
+        this.wand.setDepth(12);
+
+        this.light = this.scene.physics.add.sprite(0, -10, 'light');
+        this.light.setOrigin(0, .5); 
+
+
+
+
        
         // Wand Offsets
         this.wandOffsetX = 0;
@@ -16,14 +26,13 @@ export class Wand{
         this.gemOffsetY = 0;
 
         // Player
-        this.player = null;
+        this.player = player;
 
         // Direction of Wand
         this.direction = "right";
         this.Direction("right");
 
         //Beam of Light
-        this.light = light;
 
         this.shoot = false;
         this.currentState = IdleState.GetInstance();
@@ -95,11 +104,12 @@ export class Wand{
         this.light.x = this.gem.x;
         this.light.y = this.gem.y;
         this.light.angle = this.gem.angle - 90;
-
-
-        
         this.light.setTint(this.gem.tintTopLeft);
 
+
+
+    }
+    UpdateLightRotation(){
         // Adjusts the lights hitbox
         if(this.direction == "up"){
             this.light.body.setSize(16, 1280);
@@ -117,8 +127,6 @@ export class Wand{
             this.light.body.setSize(1280, 16);
             this.light.body.setOffset(0, 0);
         }
-
-
     }
 
 }

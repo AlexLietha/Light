@@ -80,6 +80,7 @@ export class IdleState extends WandState{
     OnEnter(context)
     {
         console.log("Entered Wand Idle State");
+        this.Update(context);
         
     }
 
@@ -108,13 +109,15 @@ export class ShootingState extends WandState{
         }
         context.UpdatePosition();
         context.UpdateLightPosition();
-        // follow gem
+        
     }
 
     OnEnter(context)
     {
 
         console.log("Entered Wand Shooting State");
+        context.UpdateLightRotation();
+
         context.light.body.enable = true;
         
     }

@@ -41,13 +41,11 @@ export class IdleEnemyState extends EnemyState{
 
     OnEnter(context)
     {
-        console.log("Entered Enemy Idle State");
         context.Wait();
     }
 
     OnExit(context)
     {
-        console.log("Exited Enemy Idle State");
 
     }
 
@@ -79,7 +77,6 @@ export class DashingEnemyState extends EnemyState{
 
     OnEnter(context)
     {
-        console.log("Entered Enemy Dash State");
        
         let dir = new Phaser.Math.Vector2(
             context.player.sprite.x - context.sprite.x, 
@@ -90,7 +87,6 @@ export class DashingEnemyState extends EnemyState{
 
     OnExit(context)
     {
-        console.log("Exited Enemy Dash State");
 
     }
 
@@ -119,20 +115,24 @@ export class DeadEnemyState extends EnemyState{
 
     OnEnter(context)
     {
-        console.log("Entered Enemy Dead State");
         context.sprite.body.enable = false;
         context.sprite.setVelocity(0, 0);
         context.sprite.active = false;
         context.sprite.visible = false;
+        context.isDead = true;
        
     }
 
     OnExit(context)
     {
-        console.log("Exited Enemy Dead State");
         context.sprite.body.enable = true;
         context.sprite.active = true;
         context.sprite.visible = true;
+        context.sprite.setTint(16777215);
+
+        context.isDead = false;
+        context.sprite.setPosition(Phaser.Math.Between(100, 1200), 100);
+
     }
 
 }

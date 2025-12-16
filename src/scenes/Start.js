@@ -1,6 +1,7 @@
 import {Player} from '/src/Player.js'
 import { Wand } from '/src/Wand.js'
 import { Enemy } from '/src/Enemy.js'
+import {WaveSystem } from '/src/WaveSystem.js'
 export class Start extends Phaser.Scene {
     
 
@@ -61,53 +62,20 @@ export class Start extends Phaser.Scene {
         this.walls.add(this.wallLeft);
         this.walls.add(this.wallRight);
 
-        // Wand Creation
-        this.gemSprite = this.add.image(300, 720-128-128-32, 'gem');
-        this.wandSprite = this.add.image(300, 720-128-128, 'wand');
-        this.lightSprite = this.physics.add.image(0, -10, 'light');
-        this.lightSprite.setOrigin(0, .5); 
-        this.gemSprite.setDepth(11);
-        this.wandSprite.setDepth(12);
-        this.wand = new Wand(this.gemSprite, this.wandSprite, this.lightSprite);
-       
-        
 
-        // Player Creation
-        this.playerSprite = this.physics.add.sprite(640, 720-128-128-32, 'player');
-        this.playerSprite.setDepth(10);
-        this.player = new Player(this, this.playerSprite, this.input.keyboard.createCursorKeys(), this.wand);
-        this.physics.add.collider(this.player.sprite, this.floor, this.player.Land, null, this.player);
-        this.physics.add.collider(this.player.sprite, this.walls);
 
-        // Enemy Creation
-        this.enemySprite = this.physics.add.sprite(250, 150, 'enemy')
-        this.enemySprite.setDepth(5);
-        this.enemy = new Enemy(this.enemySprite, this.player, this);
-        this.physics.add.collider(this.enemySprite, this.walls, this.enemy.StopDashing, null, this.enemy);
-        this.physics.add.collider(this.enemySprite, this.floor, this.enemy.StopDashing, null, this.enemy);
-        this.physics.add.overlap(
-            this.enemySprite, 
-            this.lightSprite, 
-            () => {
-            this.enemy.Damage(this.lightSprite);
-            },
-            null, 
-            this.enemy);
-        // this.enemySprite2 = this.physics.add.sprite(250, 150, 'enemy')
-        // this.enemySprite2.setDepth(5);
-        // this.enemy2 = new Enemy(this.enemySprite2, this.player, this);
-        // this.physics.add.collider(this.enemySprite2, this.walls, this.enemy2.StopDashing, null, this.enemy2);
-        // this.physics.add.collider(this.enemySprite2, this.floor, this.enemy2.StopDashing, null, this.enemy2);
+   
+        this.waveSystem = new WaveSystem(this);
 
-        // this.physics.add.collider(this.enemy, this.enemy2);
-        
+        this.clickButton = this.add.text(100, 100, 'Start', { fill: '#0f0' })
+        .setInteractive()
+        .on('pointerdown', () => this.waveSystem.started = true );
     }
 
     update() {
 
         this.background.tilePositionX += 2;
-        this.player.Update();
-        this.enemy.Update();
+        this.waveSystem.Update();
         //this.enemy2.Update();
 
 

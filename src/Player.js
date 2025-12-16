@@ -1,16 +1,21 @@
-import {PlayerState, MovingRightState, MovingLeftState, AttackingState, JumpingState, IdleState} from '/src/State.js'
-
+import {NormalState, DespawnedState, InvincibleState} from '/src/State.js'
+import { Wand} from '/src/Wand.js'
 export class Player{
-    constructor(scene, playerSprite, keys, wand){
+    constructor(scene){
+        this.scene = scene;
         this.accelerationY = 0;
         this.velocityY = 0;
         this.accelerationX = 0;
         this.velocityX = 0;
         // Character Sprite Constructor
-        this.wand = wand;
-        this.wand.player = this;
+        this.sprite = this.scene.physics.add.sprite(640, 720-128-128-32, 'player');
+        this.sprite.setDepth(10);
+        this.keys = this.scene.input.keyboard.createCursorKeys();
+        this.scene.physics.add.collider(this.sprite, this.scene.floor, this.Land, null, this);
+        this.scene.physics.add.collider(this.sprite, this.scene.walls);
 
-        this.sprite = playerSprite;
+        this.wand = new Wand(this.scene, this);
+
         this.sprite.setMaxVelocity(300, 10000);
         this.sprite.setDragX(2000);
         this.UpdateMovementY(10, 100);
@@ -20,9 +25,13 @@ export class Player{
         this.isFalling = true;
         this.isAttacking = false;
         this.isMoving = false;
+
+        this.spawned = false;
+        this.invincible = false;
+        this.health = 5;
         
+        this.currentState = DespawnedState.GetInstance();
         
-        this.keys = keys;
         
     }
 
@@ -30,7 +39,7 @@ export class Player{
 
     Update()
     {
-
+        this.currentState.Update(this);
         this.wand.Update();
         // this.currentState.Update(this);
 
@@ -106,32 +115,40 @@ export class Player{
 
     
 
-    TakeDamage(){
+    Damage(){
         this.invincible = true;
+        this.timer = this.scene.time.delayedCall(3000, () => {
+                this.Vincible();
+            });
     }
+    Vincible(){
+        this.invincible = false;
+    }
+   
+    
 
     
 
 
 
-     // SetCurrentState(NewState)
-    // {
-    //     if(this.currentState == NewState)
-    //     {
-    //         return;
-    //     }
+    SetCurrentState(NewState)
+    {
+        if(this.currentState == NewState)
+        {
+            return;
+        }
 
-    //     if(NewState != null)
-    //     {
-    //         this.currentState.OnExit(this);
-    //     }
+        if(NewState != null)
+        {
+            this.currentState.OnExit(this);
+        }
 
-    //     this.currentState = NewState;
+        this.currentState = NewState;
 
-    //     if(this.currentState != null )
-    //     {
-    //         this.currentState.OnEnter(this);
-    //     }
+        if(this.currentState != null )
+        {
+            this.currentState.OnEnter(this);
+        }
         
-    // }
+    }
 }
